@@ -1,39 +1,63 @@
 /* ============================================
-   Alte Liebe Booking — Alpine Luxe Theme
+   Alte Liebe Booking — Swiss Chalet Theme
    ============================================ */
 
 /* --- CSS Variables --- */
 :root {
-  --color-bg: #faf8f5;
-  --color-bg-warm: #f5f0ea;
+  /* Base backgrounds */
+  --color-bg: #f7f2eb;
+  --color-bg-warm: #f0e8dd;
   --color-surface: #ffffff;
-  --color-text: #2c2420;
+
+  /* Text */
+  --color-text: #2a1f17;
   --color-text-muted: #8a7e76;
   --color-text-light: #b5aa9e;
-  --color-primary: #3d5a3e;
-  --color-primary-light: #4a6e4b;
-  --color-primary-soft: #e8efe8;
-  --color-accent: #c47a4a;
-  --color-booked: #d4a69a;
+
+  /* Primary action — forest green */
+  --color-primary: #2d6b30;
+  --color-primary-light: #3a8040;
+  --color-primary-soft: #d4e8d0;
+
+  /* Swiss red — branding accent only */
+  --color-swiss-red: #c8302b;
+  --color-swiss-red-dark: #a02824;
+
+  /* Booking states */
+  --color-booked: #c4574a;
   --color-booked-bg: #fce8e3;
-  --color-selected: #3d5a3e;
-  --color-selected-bg: #d5e4d5;
-  --color-range-bg: #eaf2ea;
+  --color-pending: #854f0b;
+  --color-pending-bg: #faeeda;
+  --color-pending-border: #d4a040;
+
+  /* Selection */
+  --color-selected: #2d6b30;
+  --color-selected-bg: #d4e8d0;
+  --color-range-bg: #e4f0e2;
+
+  /* Neutral */
   --color-past: #e8e4df;
-  --color-error: #c44a4a;
+  --color-error: #c8302b;
   --color-error-bg: #fce3e3;
   --color-border: #e0dbd5;
   --color-border-light: #ece8e2;
 
-  --radius-sm: 8px;
-  --radius-lg: 16px;
+  /* Pricing/info callout */
+  --color-info-bg: #faf5ed;
+  --color-info-border: #e8dcc8;
+  --color-info-text: #6b5530;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  /* Layout */
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 2px 8px rgba(42, 31, 23, 0.06);
+  --shadow-md: 0 4px 16px rgba(42, 31, 23, 0.08);
+  --shadow-lg: 0 8px 24px rgba(42, 31, 23, 0.12);
 
+  /* Typography */
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-
+  --transition: 0.2s ease;
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
 }
@@ -56,45 +80,124 @@ html {
 body {
   font-family: var(--font-body);
   color: var(--color-text);
-  background-color: var(--color-bg);
+  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-warm) 100%);
+  background-attachment: fixed;
   line-height: 1.6;
   min-height: 100vh;
 }
 
-/* --- Grain Overlay --- */
-.grain-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+/* ============================================
+   Mountain Hero
+   ============================================ */
+.hero {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+
+.hero-svg {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
 }
 
-/* --- Header --- */
-.header {
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(42, 31, 23, 0.15) 0%, rgba(42, 31, 23, 0.6) 100%);
+}
+
+.hero-content {
   position: relative;
-  background: linear-gradient(180deg, var(--color-bg-warm) 0%, var(--color-bg) 100%);
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 2.5rem 1rem 2rem;
-  border-bottom: 1px solid var(--color-border-light);
+  padding: 2rem;
 }
 
-/* --- Language Selector --- */
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  margin-bottom: 0.25rem;
+}
+
+.hero .tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Swiss Flag Badge (in hero) --- */
+.flag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(200, 48, 43, 0.9);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 999px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.swiss-cross {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  display: inline-block;
+}
+
+.swiss-cross::before,
+.swiss-cross::after {
+  content: '';
+  position: absolute;
+  background: #fff;
+  border-radius: 1px;
+}
+
+.swiss-cross::before {
+  width: 12px;
+  height: 3.5px;
+  top: 6.25px;
+  left: 2px;
+}
+
+.swiss-cross::after {
+  width: 3.5px;
+  height: 12px;
+  top: 2px;
+  left: 6.25px;
+}
+
+/* --- Language Selector (frosted glass, in hero) --- */
 .lang-selector {
   display: flex;
   gap: 2px;
-  background: var(--color-border-light);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border-radius: 999px;
   padding: 2px;
   position: absolute;
   top: 1rem;
   right: 1.5rem;
+  z-index: 3;
 }
 
 .lang-btn {
@@ -106,64 +209,54 @@ body {
   border: none;
   border-radius: 999px;
   background: transparent;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .lang-btn:hover {
-  color: var(--color-text);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .lang-btn.active {
-  background: var(--color-primary);
-  color: white;
-}
-
-.header-inner {
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-.logo-mark {
-  display: block;
-  font-size: 1.75rem;
-  color: var(--color-accent);
-  margin-bottom: 0.25rem;
-  line-height: 1;
-}
-
-.logo-text {
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  font-weight: 600;
+  background: #ffffff;
   color: var(--color-text);
-  line-height: 1.1;
-  letter-spacing: 0.01em;
 }
 
-.tagline {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.125rem;
-  color: var(--color-text-muted);
-  margin-top: 0.25rem;
-}
-
-/* --- Main Container --- */
-.main {
+/* ============================================
+   Wood Body (content area below hero)
+   ============================================ */
+.wood-body {
+  position: relative;
   max-width: 960px;
   margin: 0 auto;
   padding: 2rem 1rem 3rem;
 }
 
-/* --- Hero Section --- */
-.hero {
+.wood-body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    #8b6f4e 0px,
+    #a08060 2px,
+    #7a5f3f 4px,
+    #9a7a55 6px,
+    #8b6f4e 8px
+  );
+}
+
+/* --- Section Hero (title area inside body) --- */
+.section-hero {
   text-align: center;
   margin-bottom: 2rem;
 }
 
-.hero-title {
+.section-hero-title {
   font-family: var(--font-display);
   font-size: 1.75rem;
   font-weight: 600;
@@ -171,7 +264,12 @@ body {
   margin-bottom: 0.25rem;
 }
 
-.hero-subtitle {
+.section-hero-season {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.section-hero-subtitle {
   font-size: 0.9375rem;
   color: var(--color-text-muted);
 }
@@ -184,7 +282,7 @@ body {
   background: var(--color-error-bg);
   color: var(--color-error);
   padding: 0.875rem 1.25rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   margin-bottom: 1.5rem;
   font-size: 0.9375rem;
   font-weight: 500;
@@ -267,19 +365,44 @@ body {
   flex-shrink: 0;
 }
 
+/* ============================================
+   Calendar Card (white card with red top-stripe)
+   ============================================ */
+.calendar-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-swiss-red), #e04540, var(--color-swiss-red));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
 /* --- Calendar Grid --- */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 /* --- Month Card --- */
 .month-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius);
   padding: 1.25rem;
   box-shadow: var(--shadow-sm);
 }
@@ -324,7 +447,7 @@ body {
   align-items: center;
   justify-content: center;
   aspect-ratio: 1;
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: default;
@@ -338,12 +461,15 @@ body {
 
 .day-cell.selectable {
   color: var(--color-primary);
+  font-weight: 600;
   cursor: pointer;
+  border-radius: 6px;
 }
 
 .day-cell.selectable:hover {
   background: var(--color-primary-soft);
-  transform: scale(1.1);
+  transform: scale(1.12);
+  box-shadow: var(--shadow-sm);
 }
 
 .day-cell.selectable:focus-visible {
@@ -355,29 +481,32 @@ body {
   background: var(--color-booked-bg);
   color: var(--color-booked);
   cursor: not-allowed;
+  border-radius: 6px;
 }
 
 .day-cell.booked-pending {
   background: repeating-linear-gradient(
     135deg,
-    #faeeda 0px,
-    #faeeda 3px,
-    transparent 3px,
-    transparent 6px
+    var(--color-pending-bg) 0px,
+    var(--color-pending-bg) 2.5px,
+    transparent 2.5px,
+    transparent 5px
   );
-  color: #854f0b;
-  border: 1px dashed #ef9f27;
+  color: var(--color-pending);
+  border: 0.5px dashed var(--color-pending-border);
+  border-radius: 6px;
   cursor: not-allowed;
 }
 
 .day-cell.check-in,
 .day-cell.check-out {
-  background: var(--color-selected);
-  color: white;
-  font-weight: 600;
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(61, 90, 62, 0.3);
-  z-index: 1;
+  background: var(--color-primary) !important;
+  color: white !important;
+  font-weight: 700;
+  border-radius: 6px;
+  transform: scale(1.12);
+  box-shadow: 0 2px 8px rgba(45, 107, 48, 0.35);
+  z-index: 2;
 }
 
 .day-cell.in-range {
@@ -392,7 +521,7 @@ body {
 }
 
 .day-cell.today {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-swiss-red);
   outline-offset: -2px;
 }
 
@@ -421,7 +550,7 @@ body {
   flex-wrap: wrap;
   gap: 1.25rem;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  padding-top: 0.5rem;
   font-size: 0.8125rem;
   color: var(--color-text-muted);
 }
@@ -436,7 +565,7 @@ body {
   display: inline-block;
   width: 12px;
   height: 12px;
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
 }
 
 .legend-dot--selectable {
@@ -452,17 +581,22 @@ body {
 .legend-dot--pending {
   background: repeating-linear-gradient(
     135deg,
-    #faeeda 0px,
-    #faeeda 3px,
-    transparent 3px,
-    transparent 6px
+    var(--color-pending-bg) 0px,
+    var(--color-pending-bg) 2.5px,
+    transparent 2.5px,
+    transparent 5px
   );
-  border: 1px dashed #ef9f27;
+  border: 1px dashed var(--color-pending-border);
 }
 
 .legend-dot--today {
   background: var(--color-bg);
-  border: 2px solid var(--color-accent);
+  border: 2px solid var(--color-swiss-red);
+}
+
+.legend-dot--past {
+  background: var(--color-past);
+  border: 1px solid var(--color-border);
 }
 
 /* --- Suggestion Banner --- */
@@ -472,7 +606,7 @@ body {
   gap: 0.75rem;
   background: var(--color-bg-warm);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
   font-size: 0.9375rem;
@@ -480,7 +614,7 @@ body {
 }
 
 .suggestion-icon {
-  color: var(--color-accent);
+  color: var(--color-swiss-red);
   font-size: 1.25rem;
   flex-shrink: 0;
 }
@@ -514,7 +648,9 @@ body {
   color: var(--color-text-muted);
 }
 
-/* --- Reservation Card --- */
+/* ============================================
+   Reservation Card
+   ============================================ */
 .reservation-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -546,28 +682,72 @@ body {
   font-size: 0.75rem;
 }
 
-/* --- Pricing Banner --- */
+/* --- Pricing Banner / Price Info --- */
 .pricing-banner {
-  background: #fdf6ef;
-  border: 1px solid #f0dcc8;
-  border-radius: var(--radius-sm);
+  background: var(--color-info-bg);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius);
   padding: 0.875rem 1.25rem;
   margin-bottom: 1.5rem;
 }
 
 .pricing-line {
   font-size: 0.9375rem;
-  color: var(--color-text);
+  color: var(--color-info-text);
 }
 
 .pricing-line strong {
-  color: var(--color-accent);
+  color: var(--color-primary);
 }
 
 .pricing-line--small {
   font-size: 0.8125rem;
   color: var(--color-text-muted);
   margin-top: 0.125rem;
+}
+
+.price-info {
+  background: var(--color-info-bg);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-info-text);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.price-info-icon {
+  width: 22px;
+  height: 22px;
+  background: var(--color-swiss-red);
+  border-radius: 4px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.price-info-icon::before,
+.price-info-icon::after {
+  content: '';
+  position: absolute;
+  background: #fff;
+  border-radius: 0.5px;
+}
+
+.price-info-icon::before {
+  width: 10px;
+  height: 2.5px;
+  top: 9.75px;
+  left: 6px;
+}
+
+.price-info-icon::after {
+  width: 2.5px;
+  height: 10px;
+  top: 6px;
+  left: 9.75px;
 }
 
 /* --- Form Grid --- */
@@ -609,7 +789,7 @@ body {
   color: var(--color-text);
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: 0.625rem 0.875rem;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   width: 100%;
@@ -618,7 +798,7 @@ body {
 .form-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(61, 90, 62, 0.1);
+  box-shadow: 0 0 0 3px rgba(45, 107, 48, 0.1);
 }
 
 .form-input--error {
@@ -626,7 +806,7 @@ body {
 }
 
 .form-input--error:focus {
-  box-shadow: 0 0 0 3px rgba(196, 74, 74, 0.1);
+  box-shadow: 0 0 0 3px rgba(200, 48, 43, 0.1);
 }
 
 .form-textarea {
@@ -654,7 +834,7 @@ body {
   font-size: 0.9375rem;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   cursor: pointer;
   transition: all var(--transition-fast);
   border: none;
@@ -675,7 +855,19 @@ body {
 
 .btn-primary:hover:not(:disabled) {
   background: var(--color-primary-light);
-  box-shadow: 0 2px 8px rgba(61, 90, 62, 0.25);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-accent {
+  background: var(--color-swiss-red);
+  color: white;
+}
+
+.btn-accent:hover:not(:disabled) {
+  background: var(--color-swiss-red-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-ghost {
@@ -700,7 +892,9 @@ body {
   animation: spin 0.8s linear infinite;
 }
 
-/* --- Confirmation Card --- */
+/* ============================================
+   Confirmation Card
+   ============================================ */
 .confirmation-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -740,7 +934,7 @@ body {
 
 .confirmation-details {
   background: var(--color-bg);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: 1.25rem;
   margin-bottom: 1.5rem;
   text-align: left;
@@ -780,7 +974,29 @@ body {
   margin-right: auto;
 }
 
-/* --- Footer --- */
+/* --- Bring Reminder --- */
+.bring-reminder {
+  background: var(--color-info-bg);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--color-info-text);
+  text-align: left;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bring-reminder strong {
+  color: var(--color-text);
+}
+
+/* ============================================
+   Footer
+   ============================================ */
 .footer {
   text-align: center;
   padding: 2rem 1rem;
@@ -791,6 +1007,50 @@ body {
 
 .footer p + p {
   margin-top: 0.25rem;
+}
+
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0.25rem;
+}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Smaller Swiss cross for footer */
+.swiss-cross-sm {
+  width: 12px;
+  height: 12px;
+  position: relative;
+  display: inline-block;
+}
+
+.swiss-cross-sm::before,
+.swiss-cross-sm::after {
+  content: '';
+  position: absolute;
+  background: var(--color-swiss-red);
+  border-radius: 0.5px;
+}
+
+.swiss-cross-sm::before {
+  width: 9px;
+  height: 2.5px;
+  top: 4.75px;
+  left: 1.5px;
+}
+
+.swiss-cross-sm::after {
+  width: 2.5px;
+  height: 9px;
+  top: 1.5px;
+  left: 4.75px;
 }
 
 .footer-link {
@@ -806,21 +1066,34 @@ body {
    Responsive — Mobile (max-width: 640px)
    ============================================ */
 @media (max-width: 640px) {
+  .hero {
+    height: 200px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .hero .tagline {
+    font-size: 1rem;
+  }
+
+  .flag-badge {
+    font-size: 0.6rem;
+    padding: 4px 10px;
+  }
+
   .lang-selector {
-    position: static;
-    justify-content: center;
-    margin-bottom: 0.75rem;
+    top: 0.75rem;
+    right: 0.75rem;
   }
 
-  .header {
-    padding: 2rem 1rem 1.5rem;
+  .lang-btn {
+    font-size: 0.65rem;
+    padding: 3px 8px;
   }
 
-  .logo-text {
-    font-size: 2rem;
-  }
-
-  .hero-title {
+  .section-hero-title {
     font-size: 1.375rem;
   }
 

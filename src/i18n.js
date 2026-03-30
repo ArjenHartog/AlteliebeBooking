@@ -30,6 +30,7 @@ export const translations = {
     legendAvailable: 'Available',
     legendConfirmed: 'Confirmed booking',
     legendPending: 'Pending request',
+    legendToday: 'Today',
     legendPast: 'Past / off-season',
 
     // Suggestion
@@ -73,8 +74,13 @@ export const translations = {
     footerLocation: 'Alte Liebe · Wiler, Lötschental, Switzerland',
     footerContact: 'Questions? Contact us at',
 
+    // Hero
+    heroBadge: 'L\u00f6tschental, Switzerland',
+    heroTagline: 'Your mountain home since 1742',
+
     // What to bring reminder (shown on confirmation)
-    bringReminder: 'Please remember to bring: towels, bed linens, kitchen towels, toilet paper, and Nespresso cups.',
+    bringReminderTitle: 'Don\'t forget to bring: ',
+    bringReminder: 'Towels, bed linens, kitchen towels, toilet paper, and Nespresso cups.',
   },
 
   nl: {
@@ -95,6 +101,7 @@ export const translations = {
     legendAvailable: 'Beschikbaar',
     legendConfirmed: 'Bevestigde boeking',
     legendPending: 'In afwachting',
+    legendToday: 'Vandaag',
     legendPast: 'Verleden / buiten seizoen',
 
     nextAvailable: 'Eerstvolgende beschikbaar: {start} — {end} ({nights} nachten vrij)',
@@ -133,7 +140,10 @@ export const translations = {
     footerLocation: 'Alte Liebe · Wiler, Lötschental, Zwitserland',
     footerContact: 'Vragen? Neem contact op via',
 
-    bringReminder: 'Vergeet niet mee te nemen: handdoeken, beddengoed, keukendoeken, wc-papier en Nespresso-cups.',
+    heroBadge: 'L\u00f6tschental, Zwitserland',
+    heroTagline: 'Uw berghuis sinds 1742',
+    bringReminderTitle: 'Vergeet niet mee te nemen: ',
+    bringReminder: 'Handdoeken, beddengoed, keukendoeken, wc-papier en Nespresso-cups.',
   },
 
   de: {
@@ -154,6 +164,7 @@ export const translations = {
     legendAvailable: 'Verfügbar',
     legendConfirmed: 'Bestätigte Buchung',
     legendPending: 'Ausstehende Anfrage',
+    legendToday: 'Heute',
     legendPast: 'Vergangen / Nebensaison',
 
     nextAvailable: 'Nächste Verfügbarkeit: {start} — {end} ({nights} Nächte frei)',
@@ -192,7 +203,10 @@ export const translations = {
     footerLocation: 'Alte Liebe · Wiler, Lötschental, Schweiz',
     footerContact: 'Fragen? Kontaktieren Sie uns unter',
 
-    bringReminder: 'Bitte denken Sie daran mitzubringen: Handtücher, Bettwäsche, Geschirrtücher, Toilettenpapier und Nespresso-Kapseln.',
+    heroBadge: 'L\u00f6tschental, Schweiz',
+    heroTagline: 'Ihr Berghaus seit 1742',
+    bringReminderTitle: 'Bitte mitbringen: ',
+    bringReminder: 'Handt\u00fccher, Bettw\u00e4sche, Geschirrt\u00fccher, Toilettenpapier und Nespresso-Kapseln.',
   },
 };
 

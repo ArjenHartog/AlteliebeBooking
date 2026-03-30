@@ -33,6 +33,49 @@ function getSeasonBounds() {
   };
 }
 
+function MountainSVG() {
+  return (
+    <svg
+      className="hero-svg"
+      viewBox="0 0 1200 400"
+      preserveAspectRatio="xMidYMax slice"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a9abf" />
+          <stop offset="50%" stopColor="#87CEEB" />
+          <stop offset="100%" stopColor="#c8dce8" />
+        </linearGradient>
+      </defs>
+      {/* Sky */}
+      <rect width="1200" height="400" fill="url(#skyGrad)" />
+      {/* Far mountains — gentle rolling peaks */}
+      <polygon
+        points="0,320 60,280 130,295 210,260 300,275 380,250 470,270 540,240 620,265 700,235 780,258 860,230 940,255 1010,238 1080,260 1140,245 1200,270 1200,400 0,400"
+        fill="#6b8f5e"
+        opacity="0.7"
+      />
+      {/* Mid mountains — sharper peaks */}
+      <polygon
+        points="0,350 80,310 150,330 230,280 310,310 400,265 480,300 550,255 630,290 720,250 800,285 870,260 960,290 1040,270 1120,295 1200,310 1200,400 0,400"
+        fill="#4a7040"
+      />
+      {/* Mid mountain snow caps */}
+      <polygon points="545,255 560,270 530,270" fill="#ffffff" opacity="0.9" />
+      <polygon points="718,250 733,267 703,267" fill="#ffffff" opacity="0.85" />
+      {/* Near mountains — tallest, darkest */}
+      <polygon
+        points="0,370 70,340 160,360 250,310 340,345 420,305 500,340 580,295 660,330 740,300 830,335 910,315 1000,345 1080,320 1160,350 1200,340 1200,400 0,400"
+        fill="#3a5c30"
+      />
+      {/* Near mountain snow cap */}
+      <polygon points="578,295 595,315 561,315" fill="#ffffff" opacity="0.9" />
+    </svg>
+  );
+}
+
 export default function App() {
   const { t, locale } = useLocale();
   const { seasonStart, seasonEnd } = getSeasonBounds();
@@ -233,28 +276,30 @@ export default function App() {
 
   return (
     <>
-      {/* Grain overlay */}
-      <div className="grain-overlay" aria-hidden="true" />
-
-      {/* Header */}
-      <header className="header">
-        <LanguageSelector />
-        <div className="header-inner">
-          <span className="logo-mark">&#10022;</span>
-          <h1 className="logo-text">Alte Liebe</h1>
-          <p className="tagline">{t('tagline')}</p>
+      {/* Mountain Hero */}
+      <header className="hero">
+        <MountainSVG />
+        <div className="hero-overlay" />
+        <div className="hero-content">
+          <div className="flag-badge">
+            <span className="swiss-cross" aria-hidden="true" />
+            <span>{t('heroBadge') || 'L\u00f6tschental, Switzerland'}</span>
+          </div>
+          <h1>Alte Liebe</h1>
+          <p className="tagline">{t('heroTagline') || 'Your mountain home since 1742'}</p>
         </div>
+        <LanguageSelector />
       </header>
 
-      {/* Main */}
-      <main className="main">
-        {/* Hero */}
-        <section className="hero">
-          <h2 className="hero-title">{t('heroTitle')}</h2>
-          <p className="hero-season">
+      {/* Main content area */}
+      <main className="wood-body">
+        {/* Section hero */}
+        <section className="section-hero">
+          <h2 className="section-hero-title">{t('heroTitle')}</h2>
+          <p className="section-hero-season">
             {t('heroSeason', { year: seasonStart.getFullYear() })}
           </p>
-          <p className="hero-subtitle">{t('heroSubtitle')}</p>
+          <p className="section-hero-subtitle">{t('heroSubtitle')}</p>
         </section>
 
         {/* Error banner */}
@@ -314,11 +359,11 @@ export default function App() {
             <p className="confirmation-note">
               {t('confirmGuestCards')}
             </p>
-            <p className="confirmation-note">
-              {t('bringReminder')}
-            </p>
+            <div className="bring-reminder">
+              <strong>{t('bringReminderTitle')}</strong> {t('bringReminder')}
+            </div>
             <button
-              className="btn btn-ghost"
+              className="btn btn-accent"
               onClick={() => {
                 setStep('select');
                 setSelectedCheckIn(null);
@@ -358,40 +403,42 @@ export default function App() {
               )}
             </div>
 
-            {/* Calendar */}
-            <Calendar
-              seasonStart={seasonStart}
-              seasonEnd={seasonEnd}
-              bookedRanges={bookedRanges}
-              selectedCheckIn={selectedCheckIn}
-              selectedCheckOut={selectedCheckOut}
-              onDateClick={handleDateClick}
-              isDateSelectable={isDateSelectable}
-              isDateBooked={isDateBooked}
-              getDateStatus={getDateStatus}
-            />
+            {/* Calendar wrapped in card with red stripe */}
+            <div className="calendar-card">
+              <Calendar
+                seasonStart={seasonStart}
+                seasonEnd={seasonEnd}
+                bookedRanges={bookedRanges}
+                selectedCheckIn={selectedCheckIn}
+                selectedCheckOut={selectedCheckOut}
+                onDateClick={handleDateClick}
+                isDateSelectable={isDateSelectable}
+                isDateBooked={isDateBooked}
+                getDateStatus={getDateStatus}
+              />
 
-            {/* Legend */}
-            <div className="legend">
-              <div className="legend-item">
-                <span className="legend-dot legend-dot--selectable" />
-                <span>{t('legendAvailable')}</span>
-              </div>
-              <div className="legend-item">
-                <span className="legend-dot legend-dot--booked" />
-                <span>{t('legendConfirmed')}</span>
-              </div>
-              <div className="legend-item">
-                <span className="legend-dot legend-dot--pending" />
-                <span>{t('legendPending')}</span>
-              </div>
-              <div className="legend-item">
-                <span className="legend-dot legend-dot--today" />
-                <span>Today</span>
-              </div>
-              <div className="legend-item">
-                <span className="legend-dot legend-dot--past" />
-                <span>{t('legendPast')}</span>
+              {/* Legend */}
+              <div className="legend">
+                <div className="legend-item">
+                  <span className="legend-dot legend-dot--selectable" />
+                  <span>{t('legendAvailable')}</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot legend-dot--confirmed" />
+                  <span>{t('legendConfirmed')}</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot legend-dot--pending" />
+                  <span>{t('legendPending')}</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot legend-dot--today" />
+                  <span>{t('legendToday')}</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot legend-dot--past" />
+                  <span>{t('legendPast')}</span>
+                </div>
               </div>
             </div>
 
@@ -438,9 +485,12 @@ export default function App() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>{t('footerLocation')}</p>
+        <div className="footer-brand">
+          <span className="swiss-cross-sm" aria-hidden="true" />
+          <span className="footer-logo">Alte Liebe</span>
+        </div>
         <p>
-          {t('footerContact')}{' '}
+          Biel, 3918 Wiler (L&ouml;tschental) &middot;{' '}
           <a href="mailto:info@alteliebe.com" className="footer-link">
             info@alteliebe.com
           </a>
