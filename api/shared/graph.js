@@ -73,14 +73,9 @@ async function getBookedRanges(from, to) {
 
   const events = response.value || [];
 
-  // Filter: exclude cancelled events, include only busy/oof/tentative
-  const validShowAs = ["busy", "oof", "tentative"];
-
+  // Filter: exclude cancelled events, include all others (free, busy, oof, tentative)
   return events
-    .filter(
-      (event) =>
-        !event.isCancelled && validShowAs.includes(event.showAs)
-    )
+    .filter((event) => !event.isCancelled)
     .map((event) => ({
       start: event.start.dateTime.substring(0, 10),
       end: event.end.dateTime.substring(0, 10),
