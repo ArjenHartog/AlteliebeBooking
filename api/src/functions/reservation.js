@@ -95,7 +95,7 @@ app.http("reservation", {
             guestName: guestName.trim(),
             email: email.trim(),
             guests: guests || 2,
-            status: "tentative",
+            status: "pending",
             message:
               "Your reservation request has been submitted. The host will confirm your booking shortly.",
           },

@@ -42,7 +42,7 @@ function getGraphClient() {
  *
  * @param {string} from - Start date in YYYY-MM-DD format
  * @param {string} to - End date in YYYY-MM-DD format
- * @returns {Promise<Array<{start: string, end: string, subject: string, showAs: string}>>}
+ * @returns {Promise<Array<{start: string, end: string, subject: string, status: 'pending'|'confirmed'}>>}
  */
 async function getBookedRanges(from, to) {
   const client = getGraphClient();
@@ -73,14 +73,16 @@ async function getBookedRanges(from, to) {
 
   const events = response.value || [];
 
-  // Filter: exclude cancelled events, include all others (free, busy, oof, tentative)
+  // Filter: exclude cancelled events and only include tentative/busy/oof (these block dates)
+  const blockingStatuses = new Set(["tentative", "busy", "oof"]);
+
   return events
-    .filter((event) => !event.isCancelled)
-    .map((event) => ({
-      start: event.start.dateTime.substring(0, 10),
-      end: event.end.dateTime.substring(0, 10),
-      subject: event.subject,
-      showAs: event.showAs,
+    .filter((event) => !event.isCancelled && blockingStatuses.has(event.showAs))
+    .map((e) => ({
+      start: e.start.dateTime.substring(0, 10),
+      end: e.end.dateTime.substring(0, 10),
+      subject: e.subject || "Reserved",
+      status: e.showAs === "tentative" ? "pending" : "confirmed",
     }));
 }
 
@@ -158,7 +160,7 @@ async function createReservation({ checkIn, checkOut, guestName, email, phone, g
     },
     isAllDay: false,
     showAs: "tentative",
-    categories: ["Reservation Request"],
+    categories: ["Web Booking"],
   };
 
   // Build the endpoint

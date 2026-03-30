@@ -1,10 +1,5 @@
 import React from 'react';
-
-const WEEKDAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
+import { useLocale } from '../LocaleContext';
 
 function formatDateParam(d) {
   const y = d.getFullYear();
@@ -30,6 +25,8 @@ function MonthGrid({
   onDateClick,
   isDateSelectable,
   isDateBooked,
+  getDateStatus,
+  t,
 }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -38,6 +35,9 @@ function MonthGrid({
   // Monday = 0, Sunday = 6
   const firstDayRaw = new Date(year, month, 1).getDay();
   const firstDay = firstDayRaw === 0 ? 6 : firstDayRaw - 1;
+
+  const monthNames = t('monthNames');
+  const dayNamesShort = t('dayNamesShort');
 
   const blanks = Array.from({ length: firstDay }, (_, i) => (
     <div key={`blank-${i}`} className="day-cell day-cell--blank" />
@@ -48,8 +48,9 @@ function MonthGrid({
     const date = new Date(year, month, dayNum);
     date.setHours(0, 0, 0, 0);
 
+    const status = getDateStatus(date);
+    const booked = status !== 'available';
     const selectable = isDateSelectable(date);
-    const booked = isDateBooked(date);
     const isToday = isSameDay(date, today);
     const isPast = date < today;
     const isCheckIn = isSameDay(date, selectedCheckIn);
@@ -61,7 +62,8 @@ function MonthGrid({
       date < selectedCheckOut;
 
     let className = 'day-cell';
-    if (booked) className += ' booked';
+    if (status === 'confirmed') className += ' booked-confirmed';
+    if (status === 'pending') className += ' booked-pending';
     if (selectable) className += ' selectable';
     if (isCheckIn) className += ' check-in';
     if (isCheckOut) className += ' check-out';
@@ -77,7 +79,7 @@ function MonthGrid({
         className={className}
         role="button"
         tabIndex={selectable ? 0 : -1}
-        aria-label={`${MONTH_NAMES[month]} ${dayNum}, ${year}${booked ? ', booked' : ''}${selectable ? ', available' : ''}${isCheckIn ? ', check-in' : ''}${isCheckOut ? ', check-out' : ''}`}
+        aria-label={`${monthNames[month]} ${dayNum}, ${year}${booked ? ', booked' : ''}${selectable ? ', available' : ''}${isCheckIn ? ', check-in' : ''}${isCheckOut ? ', check-out' : ''}`}
         data-date={dateStr}
         onClick={() => onDateClick(date)}
         onKeyDown={(e) => {
@@ -96,11 +98,11 @@ function MonthGrid({
   return (
     <div className="month-card">
       <h3 className="month-name">
-        {MONTH_NAMES[month]} {year}
+        {monthNames[month]} {year}
       </h3>
       <div className="weekday-headers">
-        {WEEKDAYS.map((wd) => (
-          <div key={wd} className="weekday-header">
+        {dayNamesShort.map((wd, idx) => (
+          <div key={idx} className="weekday-header">
             {wd}
           </div>
         ))}
@@ -122,7 +124,10 @@ export default function Calendar({
   onDateClick,
   isDateSelectable,
   isDateBooked,
+  getDateStatus,
 }) {
+  const { t } = useLocale();
+
   const months = [];
   const current = new Date(seasonStart.getFullYear(), seasonStart.getMonth(), 1);
   while (current < seasonEnd) {
@@ -142,6 +147,8 @@ export default function Calendar({
           onDateClick={onDateClick}
           isDateSelectable={isDateSelectable}
           isDateBooked={isDateBooked}
+          getDateStatus={getDateStatus}
+          t={t}
         />
       ))}
     </div>

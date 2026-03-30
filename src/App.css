@@ -78,10 +78,46 @@ body {
 
 /* --- Header --- */
 .header {
+  position: relative;
   background: linear-gradient(180deg, var(--color-bg-warm) 0%, var(--color-bg) 100%);
   text-align: center;
   padding: 2.5rem 1rem 2rem;
   border-bottom: 1px solid var(--color-border-light);
+}
+
+/* --- Language Selector --- */
+.lang-selector {
+  display: flex;
+  gap: 2px;
+  background: var(--color-border-light);
+  border-radius: 999px;
+  padding: 2px;
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+}
+
+.lang-btn {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.lang-btn:hover {
+  color: var(--color-text);
+}
+
+.lang-btn.active {
+  background: var(--color-primary);
+  color: white;
 }
 
 .header-inner {
@@ -315,9 +351,22 @@ body {
   outline-offset: 1px;
 }
 
-.day-cell.booked {
+.day-cell.booked-confirmed {
   background: var(--color-booked-bg);
   color: var(--color-booked);
+  cursor: not-allowed;
+}
+
+.day-cell.booked-pending {
+  background: repeating-linear-gradient(
+    135deg,
+    #faeeda 0px,
+    #faeeda 3px,
+    transparent 3px,
+    transparent 6px
+  );
+  color: #854f0b;
+  border: 1px dashed #ef9f27;
   cursor: not-allowed;
 }
 
@@ -362,6 +411,10 @@ body {
   bottom: 4px;
 }
 
+.booked-pending .booked-dot {
+  background: #ef9f27;
+}
+
 /* --- Legend --- */
 .legend {
   display: flex;
@@ -391,13 +444,20 @@ body {
   border: 1px solid var(--color-primary);
 }
 
-.legend-dot--booked {
+.legend-dot--confirmed {
   background: var(--color-booked-bg);
   border: 1px solid var(--color-booked);
 }
 
-.legend-dot--selected {
-  background: var(--color-selected);
+.legend-dot--pending {
+  background: repeating-linear-gradient(
+    135deg,
+    #faeeda 0px,
+    #faeeda 3px,
+    transparent 3px,
+    transparent 6px
+  );
+  border: 1px dashed #ef9f27;
 }
 
 .legend-dot--today {
@@ -746,6 +806,12 @@ body {
    Responsive — Mobile (max-width: 640px)
    ============================================ */
 @media (max-width: 640px) {
+  .lang-selector {
+    position: static;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+  }
+
   .header {
     padding: 2rem 1rem 1.5rem;
   }

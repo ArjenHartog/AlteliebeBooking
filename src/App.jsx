@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Calendar from './components/Calendar';
 import ReservationForm from './components/ReservationForm';
+import LanguageSelector from './components/LanguageSelector';
+import { useLocale } from './LocaleContext';
 
 function formatDateParam(d) {
   const y = d.getFullYear();
@@ -9,14 +11,7 @@ function formatDateParam(d) {
   return `${y}-${m}-${day}`;
 }
 
-function formatDate(d) {
-  return d.toLocaleDateString('en-GB', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
+const localeMap = { en: 'en-GB', nl: 'nl-NL', de: 'de-CH' };
 
 function parseLocalDate(str) {
   const [y, m, d] = str.split('-').map(Number);
@@ -39,7 +34,21 @@ function getSeasonBounds() {
 }
 
 export default function App() {
+  const { t, locale } = useLocale();
   const { seasonStart, seasonEnd } = getSeasonBounds();
+
+  const formatDate = useCallback(
+    (d) =>
+      d
+        ? d.toLocaleDateString(localeMap[locale], {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })
+        : '\u2014',
+    [locale]
+  );
 
   const [bookedRanges, setBookedRanges] = useState([]);
   const [selectedCheckIn, setSelectedCheckIn] = useState(null);
@@ -68,7 +77,7 @@ export default function App() {
         const data = await res.json();
         setBookedRanges(data.bookedRanges || []);
       } catch (err) {
-        setError('Could not load calendar availability. Please try again later.');
+        setError(t('errorLoadAvailability'));
       } finally {
         setLoading(false);
       }
@@ -76,12 +85,19 @@ export default function App() {
     fetchAvailability();
   }, []);
 
-  const isDateBooked = useCallback(
+  const getDateStatus = useCallback(
     (date) => {
       const d = formatDateParam(date);
-      return bookedRanges.some((range) => d >= range.start && d < range.end);
+      const range = bookedRanges.find((r) => d >= r.start && d < r.end);
+      if (!range) return 'available';
+      return range.status; // 'pending' or 'confirmed'
     },
     [bookedRanges]
+  );
+
+  const isDateBooked = useCallback(
+    (date) => getDateStatus(date) !== 'available',
+    [getDateStatus]
   );
 
   const isDateInSeason = useCallback(
@@ -151,7 +167,7 @@ export default function App() {
     }
 
     if (hasBookedInRange(selectedCheckIn, date)) {
-      setError('Your selected range includes dates that are already booked. Please choose different dates.');
+      setError(t('errorDatesConflict'));
       return;
     }
 
@@ -179,7 +195,7 @@ export default function App() {
         body: JSON.stringify(body),
       });
       if (res.status === 409) {
-        setError('These dates are no longer available. Please select different dates.');
+        setError(t('errorDatesUnavailable'));
         setStep('select');
         setSelectedCheckIn(null);
         setSelectedCheckOut(null);
@@ -204,7 +220,7 @@ export default function App() {
       });
       setStep('confirmed');
     } catch (err) {
-      setError('Something went wrong submitting your reservation. Please try again.');
+      setError(t('errorGeneric'));
     } finally {
       setSubmitting(false);
     }
@@ -222,10 +238,11 @@ export default function App() {
 
       {/* Header */}
       <header className="header">
+        <LanguageSelector />
         <div className="header-inner">
           <span className="logo-mark">&#10022;</span>
           <h1 className="logo-text">Alte Liebe</h1>
-          <p className="tagline">A home in the Swiss mountains</p>
+          <p className="tagline">{t('tagline')}</p>
         </div>
       </header>
 
@@ -233,11 +250,11 @@ export default function App() {
       <main className="main">
         {/* Hero */}
         <section className="hero">
-          <h2 className="hero-title">Reserve Your Stay</h2>
-          <p className="hero-subtitle">
-            Season {seasonStart.getFullYear()}: {formatDate(seasonStart)} &mdash;{' '}
-            {formatDate(seasonEnd)}
+          <h2 className="hero-title">{t('heroTitle')}</h2>
+          <p className="hero-season">
+            {t('heroSeason', { year: seasonStart.getFullYear() })}
           </p>
+          <p className="hero-subtitle">{t('heroSubtitle')}</p>
         </section>
 
         {/* Error banner */}
@@ -252,7 +269,7 @@ export default function App() {
         {loading && (
           <div className="loading-container">
             <div className="spinner" aria-label="Loading availability" />
-            <p className="loading-text">Loading availability&hellip;</p>
+            <p className="loading-text">{t('heroSubtitle')}</p>
           </div>
         )}
 
@@ -260,35 +277,45 @@ export default function App() {
         {step === 'confirmed' && confirmation && (
           <div className="confirmation-card">
             <div className="confirmation-icon">&#10003;</div>
-            <h3 className="confirmation-title">Reservation Request Sent</h3>
+            <h3 className="confirmation-title">{t('confirmTitle')}</h3>
             <p className="confirmation-subtitle">
-              Thank you, {confirmation.guestName}! Your request has been received.
+              {t('confirmMessage', {
+                name: confirmation.guestName,
+                checkIn: formatDate(confirmation.checkIn),
+                checkOut: formatDate(confirmation.checkOut),
+                nights: confirmation.nights,
+              })}
             </p>
             <div className="confirmation-details">
               <div className="confirmation-row">
-                <span className="confirmation-label">Check-in</span>
+                <span className="confirmation-label">{t('checkIn')}</span>
                 <span className="confirmation-value">{formatDate(confirmation.checkIn)}</span>
               </div>
               <div className="confirmation-row">
-                <span className="confirmation-label">Check-out</span>
+                <span className="confirmation-label">{t('checkOut')}</span>
                 <span className="confirmation-value">{formatDate(confirmation.checkOut)}</span>
               </div>
               <div className="confirmation-row">
-                <span className="confirmation-label">Nights</span>
+                <span className="confirmation-label">{t('nightCount', { n: confirmation.nights })}</span>
                 <span className="confirmation-value">{confirmation.nights}</span>
               </div>
               <div className="confirmation-row">
-                <span className="confirmation-label">Guests</span>
+                <span className="confirmation-label">{t('labelGuests')}</span>
                 <span className="confirmation-value">{confirmation.guests || 2}</span>
               </div>
               <div className="confirmation-row">
-                <span className="confirmation-label">Email</span>
+                <span className="confirmation-label">{t('labelEmail')}</span>
                 <span className="confirmation-value">{confirmation.email}</span>
               </div>
             </div>
             <p className="confirmation-note">
-              The host will review your request and confirm via email. The reservation is shown as
-              tentative until confirmed.
+              {t('confirmNote', { email: confirmation.email })}
+            </p>
+            <p className="confirmation-note">
+              {t('confirmGuestCards')}
+            </p>
+            <p className="confirmation-note">
+              {t('bringReminder')}
             </p>
             <button
               className="btn btn-ghost"
@@ -299,7 +326,7 @@ export default function App() {
                 setConfirmation(null);
               }}
             >
-              &larr; Make Another Reservation
+              &larr; {t('btnAnother')}
             </button>
           </div>
         )}
@@ -310,23 +337,23 @@ export default function App() {
             {/* Selection bar */}
             <div className="selection-bar">
               <div className="selection-date">
-                <span className="selection-label">Check-in</span>
+                <span className="selection-label">{t('checkIn')}</span>
                 <span className="selection-value">
-                  {selectedCheckIn ? formatDate(selectedCheckIn) : 'Select a date'}
+                  {selectedCheckIn ? formatDate(selectedCheckIn) : t('selectDate')}
                 </span>
               </div>
               <div className="selection-arrow" aria-hidden="true">
                 &rarr;
               </div>
               <div className="selection-date">
-                <span className="selection-label">Check-out</span>
+                <span className="selection-label">{t('checkOut')}</span>
                 <span className="selection-value">
-                  {selectedCheckOut ? formatDate(selectedCheckOut) : 'Select a date'}
+                  {selectedCheckOut ? formatDate(selectedCheckOut) : t('selectDate')}
                 </span>
               </div>
               {nightCount > 0 && (
                 <div className="nights-badge">
-                  {nightCount} night{nightCount !== 1 ? 's' : ''}
+                  {t('nightCount', { n: nightCount })}
                 </div>
               )}
             </div>
@@ -341,25 +368,30 @@ export default function App() {
               onDateClick={handleDateClick}
               isDateSelectable={isDateSelectable}
               isDateBooked={isDateBooked}
+              getDateStatus={getDateStatus}
             />
 
             {/* Legend */}
             <div className="legend">
               <div className="legend-item">
                 <span className="legend-dot legend-dot--selectable" />
-                <span>Available</span>
+                <span>{t('legendAvailable')}</span>
               </div>
               <div className="legend-item">
                 <span className="legend-dot legend-dot--booked" />
-                <span>Booked</span>
+                <span>{t('legendConfirmed')}</span>
               </div>
               <div className="legend-item">
-                <span className="legend-dot legend-dot--selected" />
-                <span>Selected</span>
+                <span className="legend-dot legend-dot--pending" />
+                <span>{t('legendPending')}</span>
               </div>
               <div className="legend-item">
                 <span className="legend-dot legend-dot--today" />
                 <span>Today</span>
+              </div>
+              <div className="legend-item">
+                <span className="legend-dot legend-dot--past" />
+                <span>{t('legendPast')}</span>
               </div>
             </div>
 
@@ -368,10 +400,24 @@ export default function App() {
               <div className="suggestion-banner">
                 <span className="suggestion-icon">&#9733;</span>
                 <span>
-                  Next available dates start{' '}
-                  <strong>{formatDate(nextAvailable.start)}</strong>. Click a date on the calendar
-                  to begin your reservation.
+                  {t('nextAvailable', {
+                    start: formatDate(nextAvailable.start),
+                    end: formatDate(
+                      new Date(
+                        nextAvailable.start.getFullYear(),
+                        nextAvailable.start.getMonth(),
+                        nextAvailable.start.getDate() + nextAvailable.nights
+                      )
+                    ),
+                    nights: nextAvailable.nights,
+                  })}
                 </span>
+              </div>
+            )}
+            {!nextAvailable && !selectedCheckIn && !loading && (
+              <div className="suggestion-banner">
+                <span className="suggestion-icon">&#9733;</span>
+                <span>{t('seasonFullyBooked')}</span>
               </div>
             )}
 
@@ -392,9 +438,9 @@ export default function App() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>Alte Liebe &middot; Biel, Wiler (L&ouml;tschental), Switzerland</p>
+        <p>{t('footerLocation')}</p>
         <p>
-          Questions?{' '}
+          {t('footerContact')}{' '}
           <a href="mailto:info@alteliebe.com" className="footer-link">
             info@alteliebe.com
           </a>

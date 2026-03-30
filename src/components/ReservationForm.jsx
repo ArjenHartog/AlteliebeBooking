@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useLocale } from '../LocaleContext';
 
-function formatDate(d) {
-  return d.toLocaleDateString('en-GB', {
+function formatDateLocale(d, locale) {
+  const localeMap = { en: 'en-GB', nl: 'nl-NL', de: 'de-CH' };
+  return d.toLocaleDateString(localeMap[locale] || 'en-GB', {
     weekday: 'short',
     day: 'numeric',
     month: 'long',
@@ -17,6 +19,8 @@ export default function ReservationForm({
   onCancel,
   submitting,
 }) {
+  const { t, locale } = useLocale();
+
   const [form, setForm] = useState({
     guestName: '',
     email: '',
@@ -45,16 +49,16 @@ export default function ReservationForm({
   function validate() {
     const errs = {};
     if (!form.guestName.trim()) {
-      errs.guestName = 'Full name is required';
+      errs.guestName = t('required');
     }
     if (!form.email.trim()) {
-      errs.email = 'Email is required';
+      errs.email = t('required');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      errs.email = 'Please enter a valid email address';
+      errs.email = t('invalidEmail');
     }
     const guestNum = Number(form.guests);
     if (!guestNum || guestNum < 1 || guestNum > 12) {
-      errs.guests = 'Number of guests must be between 1 and 12';
+      errs.guests = t('guestsRange', { max: 12 });
     }
     return errs;
   }
@@ -77,21 +81,18 @@ export default function ReservationForm({
 
   return (
     <div className="reservation-card">
-      <h3 className="reservation-title">Complete Your Reservation</h3>
+      <h3 className="reservation-title">{t('formTitle')}</h3>
       <p className="reservation-dates">
-        {formatDate(checkIn)} &rarr; {formatDate(checkOut)}
+        {formatDateLocale(checkIn, locale)} &rarr; {formatDateLocale(checkOut, locale)}
         <span className="nights-badge nights-badge--inline">
-          {nightCount} night{nightCount !== 1 ? 's' : ''}
+          {t('nightCount', { n: nightCount })}
         </span>
       </p>
 
       {/* Pricing info */}
       <div className="pricing-banner">
         <p className="pricing-line">
-          <strong>CHF 45</strong> per person per night (min. CHF 120/night)
-        </p>
-        <p className="pricing-line pricing-line--small">
-          Tourist tax: CHF 4.80/adult, CHF 2.40/child (6&ndash;16) per night
+          {t('formPricing')}
         </p>
       </div>
 
@@ -100,7 +101,7 @@ export default function ReservationForm({
           {/* Full name */}
           <div className="form-field">
             <label htmlFor="guestName" className="form-label">
-              Full name <span className="required">*</span>
+              {t('labelName')} <span className="required">*</span>
             </label>
             <input
               id="guestName"
@@ -109,7 +110,7 @@ export default function ReservationForm({
               className={`form-input${errors.guestName ? ' form-input--error' : ''}`}
               value={form.guestName}
               onChange={handleChange}
-              placeholder="Your full name"
+              placeholder={t('placeholderName')}
               autoComplete="name"
               disabled={submitting}
             />
@@ -119,7 +120,7 @@ export default function ReservationForm({
           {/* Email */}
           <div className="form-field">
             <label htmlFor="email" className="form-label">
-              Email <span className="required">*</span>
+              {t('labelEmail')} <span className="required">*</span>
             </label>
             <input
               id="email"
@@ -128,7 +129,7 @@ export default function ReservationForm({
               className={`form-input${errors.email ? ' form-input--error' : ''}`}
               value={form.email}
               onChange={handleChange}
-              placeholder="your@email.com"
+              placeholder={t('placeholderEmail')}
               autoComplete="email"
               disabled={submitting}
             />
@@ -138,7 +139,7 @@ export default function ReservationForm({
           {/* Phone */}
           <div className="form-field">
             <label htmlFor="phone" className="form-label">
-              Phone <span className="optional">(optional)</span>
+              {t('labelPhone')}
             </label>
             <input
               id="phone"
@@ -147,7 +148,7 @@ export default function ReservationForm({
               className="form-input"
               value={form.phone}
               onChange={handleChange}
-              placeholder="+41 79 123 45 67"
+              placeholder={t('placeholderPhone')}
               autoComplete="tel"
               disabled={submitting}
             />
@@ -156,7 +157,7 @@ export default function ReservationForm({
           {/* Number of guests */}
           <div className="form-field">
             <label htmlFor="guests" className="form-label">
-              Number of guests
+              {t('labelGuests')}
             </label>
             <input
               id="guests"
@@ -176,7 +177,7 @@ export default function ReservationForm({
         {/* Message */}
         <div className="form-field form-field--full">
           <label htmlFor="message" className="form-label">
-            Message <span className="optional">(optional)</span>
+            {t('labelMessage')}
           </label>
           <textarea
             id="message"
@@ -184,7 +185,7 @@ export default function ReservationForm({
             className="form-input form-textarea"
             value={form.message}
             onChange={handleChange}
-            placeholder="Anything we should know? Special requests, arrival time, etc."
+            placeholder={t('placeholderMessage')}
             rows="3"
             disabled={submitting}
           />
@@ -198,16 +199,16 @@ export default function ReservationForm({
             onClick={onCancel}
             disabled={submitting}
           >
-            &larr; Change Dates
+            {t('btnChangeDates')}
           </button>
           <button type="submit" className="btn btn-primary" disabled={submitting}>
             {submitting ? (
               <>
                 <span className="btn-spinner" aria-hidden="true" />
-                Sending&hellip;
+                {t('btnSubmitting')}
               </>
             ) : (
-              'Request Reservation'
+              t('btnSubmit')
             )}
           </button>
         </div>
